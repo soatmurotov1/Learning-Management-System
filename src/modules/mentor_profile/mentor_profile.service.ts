@@ -7,7 +7,6 @@ import { UserRole } from '@prisma/client';
 @Injectable()
 export class MentorProfileService {
   constructor(private prisma: PrismaService) {}
-
   private async checkAccess(
     userId: number,
     targetUserId: number,
@@ -32,15 +31,15 @@ export class MentorProfileService {
     if (userRole !== UserRole.ADMIN && dto.userId !== currentUserId) {
       throw new ForbiddenException(
         "Siz faqat o'z profil uchun mentor profilini yarata olasiz",
-      );
+      )
     }
 
     const userExists = await this.prisma.user.findUnique({
-      where: { id: dto.userId },
-    });
+      where: { id: dto.userId }
+    })
 
     if (!userExists) {
-      throw new NotFoundException('Foydalanuvchi topilmadi');
+      throw new NotFoundException('User not found')
     }
 
     const existingProfile = await this.prisma.mentorProfile.findUnique({
@@ -50,8 +49,8 @@ export class MentorProfileService {
     if (existingProfile) {
       throw new HttpException(
         'Bu foydalanuvchi uchun mentor profili allaqachon mavjud',
-        HttpStatus.BAD_REQUEST,
-      );
+        HttpStatus.BAD_REQUEST
+      )
     }
 
     return this.prisma.mentorProfile.create({
@@ -79,6 +78,7 @@ export class MentorProfileService {
       }
     })
   }
+
   async findAll(userRole: UserRole, page: number = 1, limit: number = 10) {
     const skip = (page - 1) * limit
     const profiles = await this.prisma.mentorProfile.findMany({
@@ -109,6 +109,7 @@ export class MentorProfileService {
       },
     }
   }
+
   async findOne(id: number) {
     const profile = await this.prisma.mentorProfile.findUnique({
       where: { id },
@@ -131,29 +132,6 @@ export class MentorProfileService {
     }
 
     return profile;
-  }
-  async findByUserId(userId: number) {
-    const profile = await this.prisma.mentorProfile.findUnique({
-      where: { userId },
-      include: {
-        user: {
-          select: {
-            id: true,
-            phone: true,
-            fullName: true,
-            role: true,
-            image: true,
-            isVerified: true,
-            createdAt: true
-          }
-        }
-      }
-    })
-    if (!profile) {
-      throw new NotFoundException('Mentor profili topilmadi');
-    }
-
-    return profile
   }
 
   async update(

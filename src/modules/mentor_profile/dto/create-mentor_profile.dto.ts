@@ -2,82 +2,53 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsString, IsOptional } from 'class-validator';
 
 export class CreateMentorProfileDto {
-  @ApiProperty({
-    example: 1,
-    description: 'User ID',
-  })
+  @ApiProperty({ example: 1 })
   @IsNumber()
-  userId: number;
+  userId: number
 
-  @ApiProperty({
-    example: 'Professional Python developer with 10+ years experience',
-    description: 'About mentor',
-  })
+  @ApiProperty({ example: 'string' })
   @IsString()
   @IsOptional()
-  about?: string;
+  about?: string
 
-  @ApiProperty({
-    example: 'Senior Software Engineer',
-    description: 'Job title',
-  })
+  @ApiProperty({ example: 'string' })
   @IsString()
   @IsOptional()
-  job?: string;
+  job?: string
 
-  @ApiProperty({
-    example: 10,
-    description: 'Years of experience',
-  })
+  @ApiProperty({ example: 10 })
   @IsNumber()
   @IsOptional()
-  experience?: number;
+  experience?: number
 
-  @ApiProperty({
-    example: '@mentor_username',
-    description: 'Telegram username',
-  })
+  @ApiProperty({ example: 'string' })
   @IsString()
   @IsOptional()
-  telegram?: string;
+  telegram?: string
 
-  @ApiProperty({
-    example: '@mentor_instagram',
-    description: 'Instagram username',
-  })
+  @ApiProperty({ example: 'string' })
   @IsString()
   @IsOptional()
-  instagram?: string;
+  instagram?: string
 
-  @ApiProperty({
-    example: 'https://linkedin.com/in/mentor',
-    description: 'LinkedIn profile URL',
-  })
+  @ApiProperty({ example: 'string' })
   @IsString()
   @IsOptional()
-  linkedin?: string;
+  linkedin?: string
 
-  @ApiProperty({
-    example: '@mentor_facebook',
-    description: 'Facebook profile',
-  })
+  @ApiProperty({ example: 'string' })
   @IsString()
   @IsOptional()
-  facebook?: string;
+  facebook?: string
 
-  @ApiProperty({
-    example: 'https://github.com/mentor',
-    description: 'GitHub profile URL',
-  })
+  @ApiProperty({ example: 'string'})
   @IsString()
   @IsOptional()
-  github?: string;
+  github?: string
 
-  @ApiProperty({
-    example: 'https://myportfolio.com',
-    description: 'Personal website URL',
-  })
+  @ApiProperty({ example: "string" })
   @IsString()
   @IsOptional()
-  website?: string;
+  website?: string
+  
 }
