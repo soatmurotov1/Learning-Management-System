@@ -1,34 +1,37 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
+import { VerifyDto } from './dto/verify.dto';
+import { IsPublic } from 'src/common/decorator/is-public.decorator';
 
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @IsPublic()
+  @Post('register')
+  async register(@Body() dto: RegisterDto) {
+    return this.usersService.register(dto);
   }
 
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
+  @IsPublic()
+  @Post('verify')
+  async verify(@Body() dto: VerifyDto) {
+    return this.usersService.verify(dto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @IsPublic()
+  @Post('login')
+  async login(@Body() dto: LoginDto) {
+    return this.usersService.login(dto);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @ApiBearerAuth()
+  @Get('profile/:id')
+  async getProfile(@Param('id') id: string) {
+    return this.usersService.getProfile(parseInt(id));
   }
 }
