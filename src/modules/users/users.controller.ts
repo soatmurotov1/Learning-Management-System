@@ -14,24 +14,24 @@ export class UsersController {
   @IsPublic()
   @Post('register')
   async register(@Body() dto: RegisterDto) {
-    return this.usersService.register(dto);
+    return this.usersService.register(dto)
   }
 
   @IsPublic()
   @Post('verify')
   async verify(@Body() dto: VerifyDto) {
-    return this.usersService.verify(dto);
+    return this.usersService.verify(dto)
   }
 
   @IsPublic()
   @Post('login')
   async login(@Body() dto: LoginDto) {
-    return this.usersService.login(dto);
+    return this.usersService.login(dto)
   }
 
   @ApiBearerAuth()
   @Get('profile/:id')
   async getProfile(@Param('id') id: string) {
-    return this.usersService.getProfile(parseInt(id));
+    return this.usersService.getProfile(parseInt(id))
   }
 }

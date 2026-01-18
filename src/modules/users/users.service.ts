@@ -46,12 +46,10 @@ export class UsersService {
       }
     })
     const otp = generateOtp();
-    const key = `reg_${dto.phone}`;
-    await this.redis.set(key, otp, 600);
+    const key = `reg_${dto.phone}`
+    await this.redis.set(key, otp, 600)
     await this.sms.sendSMS(
-      `Fixoo platformasidan ro'yxatdan o'tish uchun tasdiqlash kodi: ${otp}. Kodni hech kimga bermang!`,
-      dto.phone,
-    );
+      `Fixoo platformasidan ro'yxatdan o'tish uchun tasdiqlash kodi: ${otp}. Kodni hech kimga bermang!`, dto.phone );
     return {
       message: "Foydalanuvchi ro'yxatdan o'tdi. OTP SMS orqali yuborildi",
       userId: user.id,

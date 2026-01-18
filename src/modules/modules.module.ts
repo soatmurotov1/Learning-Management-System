@@ -5,6 +5,8 @@ import { MentorProfileModule } from './mentor_profile/mentor_profile.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from 'src/common/strategies/jwt.strategy';
 import { ConfigModule } from '@nestjs/config';
+import { CourseModule } from './course/course.module';
+import { CourseCategoryModule } from './course_category/course_category.module';
 
 @Module({
   imports: [
@@ -13,6 +15,8 @@ import { ConfigModule } from '@nestjs/config';
     UsersModule,
     HomeworkModule,
     MentorProfileModule,
+    CourseModule,
+    CourseCategoryModule,
   ],
   providers: [JwtStrategy],
 })
