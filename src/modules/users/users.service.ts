@@ -21,18 +21,32 @@ export class UsersService {
   async register(dto: RegisterDto) {
     const exists = await this.prisma.user.findUnique({
       where: { phone: dto.phone },
-    });
-    if (exists) {
+    })
+    if (exists && exists.isVerified) {
       throw new HttpException(
         "Telefon raqam allaqachon ro'yxatdan o'tgan",
         HttpStatus.BAD_REQUEST,
       );
     }
+    if (exists && !exists.isVerified) {
+      const otp = generateOtp()
+      const key = `reg_${dto.phone}`
+      await this.redis.set(key, otp, 600)
+      await this.sms.sendSMS(
+        `Fixoo platformasidan ro'yxatdan o'tish uchun tasdiqlash kodi: ${otp}. Kodni hech kimga bermang!`,
+        dto.phone
+      )
+      return {
+        message: 'OTP qayta yuborildi. SMS-ni tekshiring',
+        userId: exists.id,
+        success: true
+      }
+    }
     if (dto.password.length < 6) {
       throw new HttpException(
         "Parol kamida 6 ta belgidan iborat bo'lishi kerak",
-        HttpStatus.BAD_REQUEST,
-      );
+        HttpStatus.BAD_REQUEST
+      )
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
@@ -45,38 +59,42 @@ export class UsersService {
         isVerified: false
       }
     })
+
     const otp = generateOtp();
     const key = `reg_${dto.phone}`
     await this.redis.set(key, otp, 600)
     await this.sms.sendSMS(
-      `Fixoo platformasidan ro'yxatdan o'tish uchun tasdiqlash kodi: ${otp}. Kodni hech kimga bermang!`, dto.phone );
+      `Fixoo platformasidan ro'yxatdan o'tish uchun tasdiqlash kodi: ${otp}. Kodni hech kimga bermang!`,
+      dto.phone
+    )
+
     return {
       message: "Foydalanuvchi ro'yxatdan o'tdi. OTP SMS orqali yuborildi",
       userId: user.id,
       success: true,
-    };
+    }
   }
   async verify(dto: VerifyDto) {
-    const key = `reg_${dto.phone}`;
-    const storedOtp = await this.redis.get(key);
+    const key = `reg_${dto.phone}`
+    const storedOtp = await this.redis.get(key)
     if (!storedOtp || storedOtp !== dto.otp) {
       throw new HttpException(
         "OTP noto'g'ri yoki muddati tugagan",
-        HttpStatus.BAD_REQUEST,
-      );
+        HttpStatus.BAD_REQUEST
+      )
     }
     const user = await this.prisma.user.findUnique({
-      where: { phone: dto.phone },
-    });
+      where: { phone: dto.phone }
+    })
 
     if (!user) {
-      throw new HttpException('Foydalanuvchi topilmadi', HttpStatus.NOT_FOUND);
+      throw new HttpException('Foydalanuvchi topilmadi', HttpStatus.NOT_FOUND)
     }
     const updatedUser = await this.prisma.user.update({
       where: { phone: dto.phone },
-      data: { isVerified: true },
-    });
-    await this.redis.delete(key);
+      data: { isVerified: true }
+    })
+    await this.redis.delete(key)
     return {
       message: 'Telefon muvaffaqiyatli tasdiqlandi',
       userId: updatedUser.id,
@@ -111,11 +129,11 @@ export class UsersService {
       sub: user.id,
       phone: user.phone,
       role: user.role,
-      fullName: user.fullName
-    }
+      fullName: user.fullName,
+    };
     const accessToken = this.jwtService.sign(payload, {
-      expiresIn: '24h'
-    })
+      expiresIn: '24h',
+    });
 
     const { password, ...userWithoutPassword } = user;
     return {

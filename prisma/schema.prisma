@@ -133,7 +133,6 @@ model PurchasedCourse {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-
   @@id([userId, courseId])
 }
 
@@ -167,11 +166,10 @@ model LastActivity {
 model LessonGroup {
   id        Int      @id @default(autoincrement())
   name      String
-  createdAt DateTime @default(now())
   courseId String
+  createdAt DateTime @default(now())
 
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-
   lessons        Lesson[]
   exams          Exam[]
   results        ExamResult[]
@@ -250,8 +248,8 @@ model Exam {
   variantD  String
   answer    ExamAnswer
   createdAt DateTime   @default(now())
-
   lessonGroupId Int
+
   lessonGroup   LessonGroup @relation(fields: [lessonGroupId], references: [id], onDelete: Cascade)
 }
 

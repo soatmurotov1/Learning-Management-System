@@ -24,10 +24,10 @@ export class CourseCategoryController {
   }
   
   @Get()
-  @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: "ADMIN"})
+  @Roles(UserRole.ADMIN, UserRole.MENTOR, UserRole.ASSISTANT, UserRole.STUDENT)
+  @ApiOperation({ summary: "ADMIN, MENTOR, ASSISTANT, STUDENT"})
   findAll() {
-    return this.courseCategoryService.findAll();
+    return this.courseCategoryService.findAll()
   }
 
   @Get(':id')
