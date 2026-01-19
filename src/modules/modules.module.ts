@@ -7,6 +7,7 @@ import { JwtStrategy } from 'src/common/strategies/jwt.strategy';
 import { ConfigModule } from '@nestjs/config';
 import { CourseModule } from './course/course.module';
 import { CourseCategoryModule } from './course_category/course_category.module';
+import { LessonGroupModule } from './lesson_group/lesson_group.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { CourseCategoryModule } from './course_category/course_category.module';
     MentorProfileModule,
     CourseModule,
     CourseCategoryModule,
+    LessonGroupModule,
   ],
   providers: [JwtStrategy],
 })
