@@ -6,7 +6,7 @@ export class LoginDto {
   @IsString()
   phone: string
 
-  @ApiProperty({ example: '00000000' })
+  @ApiProperty({ example: '000000' })
   @IsString()
   password: string
 }

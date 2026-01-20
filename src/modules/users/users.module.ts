@@ -6,10 +6,12 @@ import { UsersService } from './users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { VericationModule } from 'src/verication/verication.module';
 
 @Module({
   imports: [
     ConfigModule,
+    VericationModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
