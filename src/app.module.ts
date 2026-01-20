@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { RedisModule } from './common/redis/redis.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
+import { VericationModule } from './verication/verication.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
     RedisModule, 
     ConfigModule.forRoot({
       isGlobal: true
-    })
+    }), 
+    VericationModule
   ],
   controllers: [AppController],
   providers: [

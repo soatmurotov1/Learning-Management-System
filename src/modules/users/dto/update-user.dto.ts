@@ -6,22 +6,21 @@ export class UpdateUserDto {
   @ApiPropertyOptional({ example: '+998901112233' })
   @IsOptional()
   @IsString()
-  phone?: string;
-
+  phone?: string
   @ApiPropertyOptional({ example: '123123123' })
   @IsOptional()
   @IsString()
-  password?: string;
+  password?: string
 
   @ApiPropertyOptional({ example: 'string' })
   @IsOptional()
   @IsString()
-  fullName?: string;
+  fullName?: string
 
   @ApiPropertyOptional({ enum: UserRole })
   @IsOptional()
   @IsEnum(UserRole)
-  role?: UserRole;
+  role?: UserRole
 
   @ApiPropertyOptional({ example: 'https://example.com' })
   @IsOptional()
