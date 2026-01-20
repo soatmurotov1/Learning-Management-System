@@ -8,7 +8,6 @@ import { ConfigModule } from '@nestjs/config';
 import { CourseModule } from './course/course.module';
 import { CourseCategoryModule } from './course_category/course_category.module';
 import { LessonGroupModule } from './lesson_group/lesson_group.module';
-import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [
@@ -20,7 +19,6 @@ import { ProfileModule } from './profile/profile.module';
     CourseModule,
     CourseCategoryModule,
     LessonGroupModule,
-    ProfileModule,
   ],
   providers: [JwtStrategy],
 })

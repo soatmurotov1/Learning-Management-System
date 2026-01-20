@@ -6,7 +6,7 @@ import { UsersService } from './users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { VericationModule } from 'src/modules/verication/verication.module';
+import { VericationModule } from '../verication/verication.module';
 
 @Module({
   imports: [

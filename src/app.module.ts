@@ -11,13 +11,13 @@ import { VericationModule } from './modules/verication/verication.module';
 
 @Module({
   imports: [
-    ModulesModule,
-    PrismaModule,
-    RedisModule,
+    ModulesModule, 
+    PrismaModule, 
+    RedisModule, 
     ConfigModule.forRoot({
-      isGlobal: true,
-    }),
-    VericationModule,
+      isGlobal: true
+    }), 
+    VericationModule
   ],
   controllers: [AppController],
   providers: [
