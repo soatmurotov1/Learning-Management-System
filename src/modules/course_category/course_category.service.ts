@@ -46,7 +46,7 @@ export class CourseCategoryService {
     })
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const category = await this.prisma.courseCategory.findUnique({
       where: { id },
       include: {
@@ -64,12 +64,12 @@ export class CourseCategoryService {
     })
 
     if (!category) {
-      throw new NotFoundException('Kategoriya topilmadi')
+      throw new NotFoundException('Kategoriya topilmadi');
     }
     return category
   }
 
-  async update(id: number, updateCourseCategoryDto: UpdateCourseCategoryDto) {
+  async update(id: string, updateCourseCategoryDto: UpdateCourseCategoryDto) {
     const category = await this.prisma.courseCategory.findUnique({
       where: { id },
     });
@@ -113,7 +113,7 @@ export class CourseCategoryService {
     })
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const category = await this.prisma.courseCategory.findUnique({
       where: { id }
     })
@@ -122,7 +122,7 @@ export class CourseCategoryService {
       throw new NotFoundException('Kategoriya topilmadi')
     }
 
-    await this.prisma.courseCategory.delete({ where: { id }})
+    await this.prisma.courseCategory.delete({ where: { id } })
     return `Kategoriya o;chirildi`
   }
 }

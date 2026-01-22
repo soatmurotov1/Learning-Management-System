@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
@@ -10,11 +6,9 @@ import { UpdateCourseDto } from './dto/update-course.dto';
 @Injectable()
 export class CourseService {
   constructor(private prisma: PrismaService) {}
-  async create(dto: CreateCourseDto, userId: number) {
-    if (!dto.mentorId || dto.mentorId <= 0) {
-      throw new BadRequestException(
-        "To'g'ri mentor ID ni kiriting"
-      )
+  async create(dto: CreateCourseDto, userId: string) {
+    if (!dto.mentorId) {
+      throw new BadRequestException("To'g'ri mentor ID ni kiriting")
     }
     const mentor = await this.prisma.user.findUnique({
       where: { id: dto.mentorId }
@@ -25,10 +19,8 @@ export class CourseService {
         `ID: ${dto.mentorId} bo'lgan mentor topilmadi. Iltimos, mavjud mentor ID ni kiriting`,
       );
     }
-    if (!dto.categoryId || dto.categoryId <= 0) {
-      throw new BadRequestException(
-        "To'g'ri kategoriya ID ni kiriting"
-      )
+    if (!dto.categoryId) {
+      throw new BadRequestException("To'g'ri kategoriya ID ni kiriting")
     }
     const category = await this.prisma.courseCategory.findUnique({
       where: { id: dto.categoryId }
@@ -119,7 +111,7 @@ export class CourseService {
     return course
   }
 
-  async update(id: string, dto: UpdateCourseDto, userId: number) {
+  async update(id: string, dto: UpdateCourseDto, userId: string) {
     const course = await this.prisma.course.findUnique({
       where: { id },
     });
@@ -141,7 +133,7 @@ export class CourseService {
         where: { id: dto.categoryId }
       })
       if (!category) {
-        throw new NotFoundException('Kategoriya topilmadi')
+        throw new NotFoundException('Kategoriya topilmadi');
       }
     }
 
@@ -171,7 +163,7 @@ export class CourseService {
     })
   }
 
-  async remove(id: string, userId: number) {
+  async remove(id: string, userId: string) {
     const course = await this.prisma.course.findUnique({
       where: { id }
     })

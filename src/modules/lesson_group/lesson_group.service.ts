@@ -16,7 +16,6 @@ export class LessonGroupService {
         course: true,
         lessons: true,
         exams: true,
-        
       }
     })
     return lessonGroup
@@ -32,7 +31,7 @@ export class LessonGroupService {
     return lessonGroups
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const lessonGroup = await this.prisma.lessonGroup.findUnique({
       where: { id },
       include: {
@@ -47,7 +46,7 @@ export class LessonGroupService {
     return lessonGroup
   }
 
-  async update(id: number, updateLessonGroupDto: UpdateLessonGroupDto) {
+  async update(id: string, updateLessonGroupDto: UpdateLessonGroupDto) {
     const lessonGroup = await this.prisma.lessonGroup.findUnique({
       where: { id }
     })
@@ -70,12 +69,12 @@ export class LessonGroupService {
     return updatedLesson
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const lessonGroup = await this.prisma.lessonGroup.findUnique({
       where: { id }
     })
     if (!lessonGroup) {
-      throw new NotFoundException(`LessonGroupId id ${id} topilmadi`);
+      throw new NotFoundException(`LessonGroupId id ${id} topilmadi`)
     }
 
     await this.prisma.lessonGroup.delete({
@@ -84,6 +83,6 @@ export class LessonGroupService {
         course: true
       }
     })
-    return  "LessonGroup o'chirildi"
+    return "LessonGroup o'chirildi"
   }
 }

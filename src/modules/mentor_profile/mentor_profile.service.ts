@@ -8,38 +8,38 @@ import { UserRole } from '@prisma/client';
 export class MentorProfileService {
   constructor(private prisma: PrismaService) {}
   private async checkAccess(
-    userId: number,
-    targetUserId: number,
-    userRole: UserRole
+    userId: string,
+    targetUserId: string,
+    userRole: UserRole,
   ) {
     if (userRole === UserRole.ADMIN) {
-      return true
+      return true;
     }
     if (userId !== targetUserId) {
       throw new ForbiddenException(
         "Siz faqat o'z profilingizni o'zgartirishingiz mumkin",
-      )
+      );
     }
-    return true
+    return true;
   }
 
   async create(
     dto: CreateMentorProfileDto,
     userRole: UserRole,
-    currentUserId: number,
+    currentUserId: string,
   ) {
     if (userRole !== UserRole.ADMIN && dto.userId !== currentUserId) {
       throw new ForbiddenException(
         "Siz faqat o'z profil uchun mentor profilini yarata olasiz",
-      )
+      );
     }
 
     const userExists = await this.prisma.user.findUnique({
-      where: { id: dto.userId }
-    })
+      where: { id: dto.userId },
+    });
 
     if (!userExists) {
-      throw new NotFoundException('User not found')
+      throw new NotFoundException('User not found');
     }
 
     const existingProfile = await this.prisma.mentorProfile.findUnique({
@@ -49,8 +49,8 @@ export class MentorProfileService {
     if (existingProfile) {
       throw new HttpException(
         'Bu foydalanuvchi uchun mentor profili allaqachon mavjud',
-        HttpStatus.BAD_REQUEST
-      )
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     return this.prisma.mentorProfile.create({
@@ -64,7 +64,7 @@ export class MentorProfileService {
         linkedin: dto.linkedin,
         facebook: dto.facebook,
         github: dto.github,
-        website: dto.website
+        website: dto.website,
       },
       include: {
         user: {
@@ -72,15 +72,15 @@ export class MentorProfileService {
             id: true,
             phone: true,
             fullName: true,
-            role: true
-          }
-        }
-      }
-    })
+            role: true,
+          },
+        },
+      },
+    });
   }
 
   async findAll(userRole: UserRole, page: number = 1, limit: number = 10) {
-    const skip = (page - 1) * limit
+    const skip = (page - 1) * limit;
     const profiles = await this.prisma.mentorProfile.findMany({
       skip,
       take: limit,
@@ -92,13 +92,13 @@ export class MentorProfileService {
             fullName: true,
             role: true,
             isVerified: true,
-            createdAt: true
+            createdAt: true,
           },
         },
       },
-      orderBy: { id: 'desc' }
-    })
-    const total = await this.prisma.mentorProfile.count()
+      orderBy: { id: 'desc' },
+    });
+    const total = await this.prisma.mentorProfile.count();
     return {
       data: profiles,
       pagination: {
@@ -107,10 +107,10 @@ export class MentorProfileService {
         limit,
         pages: Math.ceil(total / limit),
       },
-    }
+    };
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const profile = await this.prisma.mentorProfile.findUnique({
       where: { id },
       include: {
@@ -122,27 +122,27 @@ export class MentorProfileService {
             role: true,
             image: true,
             isVerified: true,
-            createdAt: true
-          }
-        }
-      }
-    })
+            createdAt: true,
+          },
+        },
+      },
+    });
     if (!profile) {
-      throw new NotFoundException('Mentor profili topilmadi')
+      throw new NotFoundException('Mentor profili topilmadi');
     }
 
     return profile;
   }
 
   async update(
-    id: number,
+    id: string,
     dto: UpdateMentorProfileDto,
     userRole: UserRole,
-    currentUserId: number
+    currentUserId: string,
   ) {
     const profile = await this.prisma.mentorProfile.findUnique({
-      where: { id }
-    })
+      where: { id },
+    });
 
     if (!profile) {
       throw new NotFoundException('Mentor profili topilmadi');
@@ -160,7 +160,7 @@ export class MentorProfileService {
         linkedin: dto.linkedin,
         facebook: dto.facebook,
         github: dto.github,
-        website: dto.website
+        website: dto.website,
       },
       include: {
         user: {
@@ -168,29 +168,29 @@ export class MentorProfileService {
             id: true,
             phone: true,
             fullName: true,
-            role: true
-          }
-        }
-      }
-    })
+            role: true,
+          },
+        },
+      },
+    });
   }
 
-  async remove(id: number, userRole: UserRole, currentUserId: number) {
+  async remove(id: string, userRole: UserRole, currentUserId: string) {
     const profile = await this.prisma.mentorProfile.findUnique({
-      where: { id }
-    })
+      where: { id },
+    });
 
     if (!profile) {
-      throw new NotFoundException('Mentor profili topilmadi')
+      throw new NotFoundException('Mentor profili topilmadi');
     }
-    await this.checkAccess(currentUserId, profile.userId, userRole)
+    await this.checkAccess(currentUserId, profile.userId, userRole);
     await this.prisma.mentorProfile.delete({
-      where: { id }
-    })
-    return "Mentor profile o'chirildi"
+      where: { id },
+    });
+    return "Mentor profile o'chirildi";
   }
 
-  async getMyProfile(userId: number) {
+  async getMyProfile(userId: string) {
     const profile = await this.prisma.mentorProfile.findUnique({
       where: { userId },
       include: {
@@ -202,14 +202,14 @@ export class MentorProfileService {
             role: true,
             image: true,
             isVerified: true,
-            createdAt: true
-          }
-        }
-      }
-    })
+            createdAt: true,
+          },
+        },
+      },
+    });
     if (!profile) {
-      throw new NotFoundException('Sizning mentor profilingiz topilmadi')
+      throw new NotFoundException('Sizning mentor profilingiz topilmadi');
     }
-    return profile
+    return profile;
   }
 }

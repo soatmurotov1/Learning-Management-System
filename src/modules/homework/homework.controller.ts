@@ -27,14 +27,14 @@ export class HomeworkController {
   @Roles(UserRole.ADMIN, UserRole.ASSISTANT, UserRole.MENTOR, UserRole.STUDENT)
   @ApiOperation({ summary: 'ADMIN, MENTOR, ASSISTANT, STUDENT' })
   findAll() {
-    return this.homeworkService.findAll()
+    return this.homeworkService.findAll();
   }
 
   @Get(':id')
   @Roles(UserRole.ADMIN, UserRole.ASSISTANT, UserRole.MENTOR, UserRole.STUDENT)
   @ApiOperation({ summary: 'ADMIN, MENTOR, ASSISTANT, STUDENT' })
   findOne(@Param('id') id: string) {
-    return this.homeworkService.findOne(+id)
+    return this.homeworkService.findOne(id);
   }
 
   @Patch(':id')
@@ -43,17 +43,16 @@ export class HomeworkController {
   update(
     @Param('id') id: string,
     @Body() updateHomeworkDto: UpdateHomeworkDto,
-    @Request() req: any
+    @Request() req: any,
   ) {
-    return this.homeworkService.update(+id, updateHomeworkDto, req.user.id);
+    return this.homeworkService.update(id, updateHomeworkDto, req.user.id);
   }
 
   @Delete(':id')
   @Roles(UserRole.ADMIN, UserRole.MENTOR, UserRole.ASSISTANT)
-  @ApiOperation({ summary: "ADMIN, MENTOR, ASSISTANT" })
+  @ApiOperation({ summary: 'ADMIN, MENTOR, ASSISTANT' })
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string, @Request() req: any) {
-    return this.homeworkService.remove(+id, req.user.id);
+    return this.homeworkService.remove(id, req.user.id);
   }
 }
-

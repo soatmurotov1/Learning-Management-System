@@ -41,17 +41,17 @@ enum ExamAnswer {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  phone     String   @unique
-  password  String
-  role      UserRole @default(STUDENT)
-  fullName  String
-  image     String?
+  id         String   @id @default(uuid())
+  phone      String   @unique
+  password   String
+  role       UserRole @default(STUDENT)
+  fullName   String
+  image      String?
   isVerified Boolean  @default(false)
-  createdAt DateTime @default(now())
+  createdAt  DateTime @default(now())
 
   mentorProfile MentorProfile?
-  courses       Course[]           @relation("MentorCourses")
+  courses       Course[]             @relation("MentorCourses")
   assigned      AssignedCourse[]
   purchased     PurchasedCourse[]
   ratings       Rating[]
@@ -66,7 +66,7 @@ model User {
 }
 
 model MentorProfile {
-  id         Int     @id @default(autoincrement())
+  id         String  @id @default(uuid())
   about      String?
   job        String?
   experience Int
@@ -77,12 +77,12 @@ model MentorProfile {
   github     String?
   website    String?
 
-  userId Int  @unique
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model CourseCategory {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   name      String
   createdAt DateTime @default(now())
 
@@ -100,12 +100,12 @@ model Course {
   published  Boolean     @default(false)
   createdAt  DateTime    @default(now())
   updatedAt  DateTime?
-  categoryId Int
-  mentorId   Int
+  categoryId String
+  mentorId   String
 
-  category CourseCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  mentor   User           @relation("MentorCourses", fields: [mentorId], references: [id], onDelete: Cascade)
-  lastActivities LastActivity[] 
+  category       CourseCategory    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  mentor         User              @relation("MentorCourses", fields: [mentorId], references: [id], onDelete: Cascade)
+  lastActivities LastActivity[]
   assigned       AssignedCourse[]
   purchased      PurchasedCourse[]
   ratings        Rating[]
@@ -114,7 +114,7 @@ model Course {
 }
 
 model AssignedCourse {
-  userId    Int
+  userId    String
   courseId  String
   createdAt DateTime @default(now())
 
@@ -125,7 +125,7 @@ model AssignedCourse {
 }
 
 model PurchasedCourse {
-  userId      Int
+  userId      String
   courseId    String
   amount      Decimal?
   paidVia     PaidVia
@@ -133,29 +133,30 @@ model PurchasedCourse {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
   @@id([userId, courseId])
 }
 
 model Rating {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   rate      Int
   comment   String
   createdAt DateTime @default(now())
-  userId   Int
-  courseId String
+  userId    String
+  courseId  String
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 }
 
 model LastActivity {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   url       String?
   updatedAt DateTime @default(now())
-  userId   Int     @unique
-  courseId String?
-  groupId  Int?
-  lessonId String?
+  userId    String   @unique
+  courseId  String?
+  groupId   String?
+  lessonId  String?
 
   user   User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   course Course?      @relation(fields: [courseId], references: [id])
@@ -164,12 +165,12 @@ model LastActivity {
 }
 
 model LessonGroup {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   name      String
-  courseId String
+  courseId  String
   createdAt DateTime @default(now())
 
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course         Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
   lessons        Lesson[]
   exams          Exam[]
   results        ExamResult[]
@@ -183,116 +184,114 @@ model Lesson {
   video     String
   createdAt DateTime  @default(now())
   updatedAt DateTime?
-  groupId Int
+  groupId   String
 
-  group   LessonGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  group          LessonGroup    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   files          LessonFile[]
   homework       Homework?
   views          LessonView[]
-  lastActivities LastActivity[] 
+  lastActivities LastActivity[]
 }
 
 model LessonView {
   lessonId String
-  userId   Int
+  userId   String
   view     Boolean
-  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson   Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([lessonId, userId])
 }
 
 model LessonFile {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   file      String
   note      String?
   createdAt DateTime @default(now())
-  lessonId String
+  lessonId  String
 
-  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }
 
 model Homework {
-  id        Int       @id @default(autoincrement())
+  id        String    @id @default(uuid())
   task      String
   file      String?
   createdAt DateTime  @default(now())
   updatedAt DateTime?
-  lessonId String @unique
-  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId  String    @unique
 
+  lesson      Lesson               @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   submissions HomeworkSubmission[]
 }
 
 model HomeworkSubmission {
-  id        Int               @id @default(autoincrement())
-  text      String?
-  file      String
-  reason    String?
-  status    HomeworkSubStatus @default(PENDING)
-  createdAt DateTime          @default(now())
-  updatedAt DateTime?
-  homeworkId Int
-  userId     Int
+  id         String            @id @default(uuid())
+  text       String?
+  file       String
+  reason     String?
+  status     HomeworkSubStatus @default(PENDING)
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime?
+  homeworkId String
+  userId     String
 
   homework Homework @relation(fields: [homeworkId], references: [id], onDelete: Cascade)
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Exam {
-  id        Int        @id @default(autoincrement())
-  question  String
-  variantA  String
-  variantB  String
-  variantC  String
-  variantD  String
-  answer    ExamAnswer
-  createdAt DateTime   @default(now())
-  lessonGroupId Int
+  id            String     @id @default(uuid())
+  question      String
+  variantA      String
+  variantB      String
+  variantC      String
+  variantD      String
+  answer        ExamAnswer
+  createdAt     DateTime   @default(now())
+  lessonGroupId String
 
-  lessonGroup   LessonGroup @relation(fields: [lessonGroupId], references: [id], onDelete: Cascade)
+  lessonGroup LessonGroup @relation(fields: [lessonGroupId], references: [id], onDelete: Cascade)
 }
 
 model ExamResult {
-  id        Int      @id @default(autoincrement())
-  passed    Boolean
-  corrects  Int
-  wrongs    Int
-  createdAt DateTime @default(now())
-  lessonGroupId Int
-  userId        Int
+  id            String   @id @default(uuid())
+  passed        Boolean
+  corrects      Int
+  wrongs        Int
+  createdAt     DateTime @default(now())
+  lessonGroupId String
+  userId        String
 
   lessonGroup LessonGroup @relation(fields: [lessonGroupId], references: [id], onDelete: Cascade)
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Question {
-  id        Int       @id @default(autoincrement())
+  id        String          @id @default(uuid())
   text      String
   file      String?
-  read      Boolean   @default(false)
+  read      Boolean         @default(false)
   readAt    DateTime?
-  createdAt DateTime  @default(now())
+  createdAt DateTime        @default(now())
   updatedAt DateTime?
-  userId   Int
-  courseId String
+  userId    String
+  courseId  String
+  answer    QuestionAnswer?
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-
-  answer QuestionAnswer?
 }
 
 model QuestionAnswer {
-  id        Int       @id @default(autoincrement())
-  text      String
-  file      String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime?
-  questionId Int @unique
-  userId     Int
+  id         String    @id @default(uuid())
+  text       String
+  file       String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime?
+  questionId String    @unique
+  userId     String
 
   question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
-

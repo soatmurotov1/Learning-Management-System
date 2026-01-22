@@ -6,7 +6,7 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 export class ProfileService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getProfile(userId: number) {
+  async getProfile(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -64,7 +64,7 @@ export class ProfileService {
     };
   }
 
-  async updateProfile(userId: number, updateProfileDto: UpdateProfileDto) {
+  async updateProfile(userId: string, updateProfileDto: UpdateProfileDto) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
@@ -124,22 +124,22 @@ export class ProfileService {
     };
   }
 
-  async deleteProfile(userId: number) {
+  async deleteProfile(userId: string) {
     const user = await this.prisma.user.findUnique({
-      where: { id: userId }
-    })
+      where: { id: userId },
+    });
 
     if (!user) {
       throw new NotFoundException('Foydalanuvchi topilmadi');
     }
 
     await this.prisma.user.delete({
-      where: { id: userId }
-    })
+      where: { id: userId },
+    });
 
     return {
       message: "Profil o'chirildi",
-      userId: userId
-    }
+      userId: userId,
+    };
   }
 }
