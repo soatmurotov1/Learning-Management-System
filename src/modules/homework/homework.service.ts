@@ -107,13 +107,11 @@ export class HomeworkService {
         throw new NotFoundException(`ID: ${id} vazifa topilmadi`);
       }
 
-      await this.prisma.homework.delete({
-        where: { id },
-      });
-      return { message: `ID: ${id} vazifa o'chirildi` };
+      await this.prisma.homework.delete({ where: { id }})
+      return { message: `ID: ${id} vazifa o'chirildi` }
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw error;
+        throw error
       }
       throw new BadRequestException("Vazifani o'chirishda xato yuz berdi");
     }

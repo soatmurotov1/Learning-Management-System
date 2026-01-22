@@ -78,12 +78,12 @@ export class LessonGroupService {
       throw new NotFoundException(`LessonGroupId id ${id} topilmadi`);
     }
 
-    const deleteLesson = await this.prisma.lessonGroup.delete({
+    await this.prisma.lessonGroup.delete({
       where: { id },
       include: {
         course: true
       }
     })
-    return deleteLesson
+    return  "LessonGroup o'chirildi"
   }
 }

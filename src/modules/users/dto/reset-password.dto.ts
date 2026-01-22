@@ -8,7 +8,7 @@ export class ResetPassword {
     phone: string
 
 
-    @ApiProperty({ example: "123123"})
+    @ApiProperty({ example: "123123123"})
     @IsString()
     password: string
 
