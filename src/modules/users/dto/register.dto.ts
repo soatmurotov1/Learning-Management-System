@@ -20,12 +20,12 @@ export class RegisterDto {
   @IsEnum(UserRole)
   role: UserRole = UserRole.STUDENT
 
-  @ApiProperty({ example: 'http://example.com/image.jpg', required: false })
+  @ApiProperty({ example: 'http://example.com/image.jpg' })
   @IsOptional()
   @IsString()
   image?: string
 
-  @ApiProperty({ example: '123456' })
+  @ApiProperty({ example: '000000' })
   @IsString()
   otp: string
 }

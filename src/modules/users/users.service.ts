@@ -6,7 +6,6 @@ import { LoginDto } from './dto/login.dto';
 import { VerifyDto } from './dto/verify.dto';
 import { ResetPassword } from './dto/reset-password.dto';
 import { RefreshToken } from './dto/refresh_token.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
@@ -241,49 +240,54 @@ export class UsersService {
     }
   }
 
-  async editPhone(userId: number, newPhone: string, otp: string) {
-    const key = `${EVerificationTypes.EDIT_PHONE}_${newPhone}`
-    const storedOtp = await this.redis.get(key)
-    if (!storedOtp || storedOtp !== otp) {
-      throw new HttpException(
-        "OTP noto'g'ri yoki muddati tugagan",
-        HttpStatus.BAD_REQUEST
-      )
-    }
-
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId }
-    })
-
-    if (!user) {
-      throw new HttpException('Foydalanuvchi topilmadi', HttpStatus.NOT_FOUND)
-    }
-
-    const phoneExists = await this.prisma.user.findUnique({
-      where: { phone: newPhone }
-    })
-
-    if (phoneExists && phoneExists.id !== userId) {
-      throw new HttpException(
-        "Bu telefon raqam allaqachon ro'yxatdan o'tgan",
-        HttpStatus.BAD_REQUEST
-      )
-    }
-
-    const updatedUser = await this.prisma.user.update({
-      where: { id: userId },
-      data: { phone: newPhone }
-    })
-
-    await this.vericationService.deleteOtp(
-      EVerificationTypes.EDIT_PHONE,
-      newPhone
+  async editPhone(userId: number, newPhone: string, otp: string, oldPhone: string) {
+  const key = `${EVerificationTypes.EDIT_PHONE}_${newPhone}`
+  const storedOtp = await this.redis.get(key)
+  if (!storedOtp || storedOtp !== otp) {
+    throw new HttpException(
+      "OTP noto'g'ri yoki muddati tugagan",
+      HttpStatus.BAD_REQUEST
     )
-    const { password, ...userWithoutPassword } = updatedUser
-    return {
-      message: "Telefon raqam muvaffaqiyatli o'zgartirildi",
-      user: userWithoutPassword,
-      success: true
-    }
   }
+
+  const user = await this.prisma.user.findUnique({
+    where: { id: userId }
+  })
+
+  if (!user) {
+    throw new HttpException('Foydalanuvchi topilmadi', HttpStatus.NOT_FOUND)
+  }
+  if (user.phone !== oldPhone) {
+    throw new HttpException(
+      "Eski telefon raqam noto'g'ri",
+      HttpStatus.BAD_REQUEST
+    )
+  }
+
+  const phoneExists = await this.prisma.user.findUnique({
+    where: { phone: newPhone }
+  })
+
+  if (phoneExists && phoneExists.id !== userId) {
+    throw new HttpException( "Bu telefon raqam allaqachon ro'yxatdan o'tgan", HttpStatus.BAD_REQUEST
+    )
+  }
+
+  const updatedUser = await this.prisma.user.update({
+    where: { id: userId },
+    data: { phone: newPhone }
+  })
+    await this.vericationService.deleteOtp(
+    EVerificationTypes.EDIT_PHONE,
+    newPhone
+  )
+
+  const { password, ...userWithoutPassword } = updatedUser;
+  return {
+    message: "Telefon raqam muvaffaqiyatli o'zgartirildi",
+    user: userWithoutPassword,
+    success: true
+  }
+}
+
 }

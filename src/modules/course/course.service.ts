@@ -11,40 +11,33 @@ import { UpdateCourseDto } from './dto/update-course.dto';
 export class CourseService {
   constructor(private prisma: PrismaService) {}
   async create(dto: CreateCourseDto, userId: number) {
-    // Validate mentorId is provided
     if (!dto.mentorId || dto.mentorId <= 0) {
       throw new BadRequestException(
-        "Mentor ID noto'g'ri. Iltimos, to'g'ri mentor ID ni kiriting",
-      );
+        "To'g'ri mentor ID ni kiriting"
+      )
     }
-
-    // Check if mentor exists
     const mentor = await this.prisma.user.findUnique({
-      where: { id: dto.mentorId },
-    });
+      where: { id: dto.mentorId }
+    })
 
     if (!mentor) {
       throw new NotFoundException(
         `ID: ${dto.mentorId} bo'lgan mentor topilmadi. Iltimos, mavjud mentor ID ni kiriting`,
       );
     }
-
-    // Validate categoryId is provided
     if (!dto.categoryId || dto.categoryId <= 0) {
       throw new BadRequestException(
-        "Kategoriya ID noto'g'ri. Iltimos, to'g'ri kategoriya ID ni kiriting",
-      );
+        "To'g'ri kategoriya ID ni kiriting"
+      )
     }
-
-    // Check if category exists
     const category = await this.prisma.courseCategory.findUnique({
-      where: { id: dto.categoryId },
-    });
+      where: { id: dto.categoryId }
+    })
 
     if (!category) {
       throw new NotFoundException(
-        `ID: ${dto.categoryId} bo'lgan kategoriya topilmadi. Iltimos, mavjud kategoriya ID ni kiriting`,
-      );
+        `ID: ${dto.categoryId} bo'lgan kategoriya topilmadi`
+      )
     }
 
     return this.prisma.course.create({
@@ -57,7 +50,7 @@ export class CourseService {
         level: dto.level,
         published: dto.published || false,
         categoryId: dto.categoryId,
-        mentorId: dto.mentorId,
+        mentorId: dto.mentorId
       },
       include: {
         category: true,
@@ -65,11 +58,11 @@ export class CourseService {
           select: {
             id: true,
             fullName: true,
-            phone: true,
-          },
-        },
-      },
-    });
+            phone: true
+          }
+        }
+      }
+    })
   }
 
   async findAll(page: number = 1, limit: number = 10) {
@@ -85,23 +78,23 @@ export class CourseService {
             select: {
               id: true,
               fullName: true,
-              phone: true,
-            },
-          },
+              phone: true
+            }
+          }
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: 'desc' }
       }),
-      this.prisma.course.count({ where: { published: true } }),
-    ]);
+      this.prisma.course.count({ where: { published: true } })
+    ])
     return {
       data: courses,
       pagination: {
         total,
         page,
         limit,
-        pages: Math.ceil(total / limit),
-      },
-    };
+        pages: Math.ceil(total / limit)
+      }
+    }
   }
 
   async findOne(id: string) {
@@ -114,16 +107,16 @@ export class CourseService {
             id: true,
             fullName: true,
             phone: true,
-            image: true,
-          },
-        },
-      },
-    });
+            image: true
+          }
+        }
+      }
+    })
 
     if (!course) {
-      throw new NotFoundException('Kurs topilmadi');
+      throw new NotFoundException('Kurs topilmadi')
     }
-    return course;
+    return course
   }
 
   async update(id: string, dto: UpdateCourseDto, userId: number) {
@@ -131,25 +124,24 @@ export class CourseService {
       where: { id },
     });
     if (!course) {
-      throw new NotFoundException('Kurs topilmadi');
+      throw new NotFoundException('Kurs topilmadi')
     }
 
     if (dto.mentorId && dto.mentorId !== course.mentorId) {
       const mentor = await this.prisma.user.findUnique({
-        where: { id: dto.mentorId },
-      });
+        where: { id: dto.mentorId }
+      })
 
       if (!mentor) {
-        throw new NotFoundException('Mentor topilmadi');
+        throw new NotFoundException('Mentor topilmadi')
       }
     }
     if (dto.categoryId && dto.categoryId !== course.categoryId) {
       const category = await this.prisma.courseCategory.findUnique({
-        where: { id: dto.categoryId },
-      });
-
+        where: { id: dto.categoryId }
+      })
       if (!category) {
-        throw new NotFoundException('Kategoriya topilmadi');
+        throw new NotFoundException('Kategoriya topilmadi')
       }
     }
 
@@ -172,23 +164,22 @@ export class CourseService {
           select: {
             id: true,
             fullName: true,
-            phone: true,
-          },
-        },
-      },
-    });
+            phone: true
+          }
+        }
+      }
+    })
   }
 
   async remove(id: string, userId: number) {
     const course = await this.prisma.course.findUnique({
-      where: { id },
-    });
+      where: { id }
+    })
     if (!course) {
-      throw new NotFoundException('Kurs topilmadi');
+      throw new NotFoundException('Kurs topilmadi')
     }
 
-    return this.prisma.course.delete({
-      where: { id },
-    });
+    await this.prisma.course.delete({ where: { id }})
+    return `Kurs o'chirildi`
   }
 }

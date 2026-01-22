@@ -184,9 +184,10 @@ export class MentorProfileService {
       throw new NotFoundException('Mentor profili topilmadi')
     }
     await this.checkAccess(currentUserId, profile.userId, userRole)
-    return this.prisma.mentorProfile.delete({
+    await this.prisma.mentorProfile.delete({
       where: { id }
     })
+    return "Mentor profile o'chirildi"
   }
 
   async getMyProfile(userId: number) {

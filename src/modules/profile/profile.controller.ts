@@ -1,34 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Delete, Req } from '@nestjs/common';
 import { ProfileService } from './profile.service';
-import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { Auth } from '../../common/decorator/auth.decorator';
 
 @Controller('profile')
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
-  @Post()
-  create(@Body() createProfileDto: CreateProfileDto) {
-    return this.profileService.create(createProfileDto);
-  }
-
+  @Auth()
   @Get()
-  findAll() {
-    return this.profileService.findAll();
+  getProfile(@Req() req: any) {
+    const userId = req.user.id;
+    return this.profileService.getProfile(userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.profileService.findOne(+id);
+  @Auth()
+  @Patch()
+  update(@Req() req: any, @Body() updateProfileDto: UpdateProfileDto) {
+    const userId = req.user.id;
+    return this.profileService.updateProfile(userId, updateProfileDto);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProfileDto: UpdateProfileDto) {
-    return this.profileService.update(+id, updateProfileDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.profileService.remove(+id);
+  @Auth()
+  @Delete()
+  remove(@Req() req: any) {
+    const userId = req.user.id;
+    return this.profileService.deleteProfile(userId)
   }
 }

@@ -42,6 +42,11 @@ export class UsersController {
   @Post('edit-phone')
   @ApiBearerAuth()
   async editPhone(@Request() req: any, @Body() dto: EditPhoneDto) {
-    return this.usersService.editPhone(req.user.sub, dto.newPhone, dto.otp)
+    return this.usersService.editPhone(
+      req.user.sub,
+      dto.newPhone,
+      dto.otp,
+      dto.oldPhone
+    )
   }
 }
