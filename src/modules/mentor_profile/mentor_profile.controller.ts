@@ -1,15 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-  Request,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query } from '@nestjs/common';
 import { ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { MentorProfileService } from './mentor_profile.service';
 import { CreateMentorProfileDto } from './dto/create-mentor_profile.dto';
@@ -41,7 +30,7 @@ export class MentorProfileController {
 
   @Get()
   @Roles(UserRole.ADMIN, UserRole.MENTOR)
-  @ApiOperation({ summary: "ADMIN, MENTOR"})
+  @ApiOperation({ summary: "ADMIN, MENTOR" })
   async findAll(
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '10',
@@ -56,9 +45,9 @@ export class MentorProfileController {
 
   @Get(':id')
   @Roles(UserRole.ADMIN, UserRole.MENTOR, UserRole.ASSISTANT, UserRole.STUDENT)
-  @ApiOperation({ summary: "ADMIN, MENTOR, ASSISTANT, STUDENT"})
+  @ApiOperation({ summary: 'ADMIN, MENTOR, ASSISTANT, STUDENT' })
   async findOne(@Param('id') id: string) {
-    return this.mentorProfileService.findOne(parseInt(id));
+    return this.mentorProfileService.findOne(id)
   }
 
   @Patch(':id')
@@ -71,7 +60,7 @@ export class MentorProfileController {
     @Request() req: any,
   ) {
     return this.mentorProfileService.update(
-      parseInt(id),
+      id,
       updateMentorProfileDto,
       req.user.role,
       req.user.id
@@ -82,10 +71,7 @@ export class MentorProfileController {
   @Roles(UserRole.ADMIN, UserRole.MENTOR, UserRole.ASSISTANT)
   @ApiOperation({ summary: 'ADMIN, MENTOR, ASSISTANT' })
   async remove(@Param('id') id: string, @Request() req: any) {
-    await this.mentorProfileService.remove(
-      parseInt(id),
-      req.user.role,
-      req.user.id,
-    );
+    await this.mentorProfileService.remove(id, req.user.role, req.user.id)
+    return "Mentor profile o'chrildi"
   }
 }

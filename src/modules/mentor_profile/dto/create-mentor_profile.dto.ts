@@ -2,9 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsString, IsOptional } from 'class-validator';
 
 export class CreateMentorProfileDto {
-  @ApiProperty({ example: 1 })
-  @IsNumber()
-  userId: number
+  @ApiProperty({ example: 'string' })
+  @IsString()
+  userId: string
 
   @ApiProperty({ example: 'string' })
   @IsString()
@@ -41,7 +41,7 @@ export class CreateMentorProfileDto {
   @IsOptional()
   facebook?: string
 
-  @ApiProperty({ example: 'string'})
+  @ApiProperty({ example: "string" })
   @IsString()
   @IsOptional()
   github?: string
@@ -50,5 +50,5 @@ export class CreateMentorProfileDto {
   @IsString()
   @IsOptional()
   website?: string
-  
+
 }
