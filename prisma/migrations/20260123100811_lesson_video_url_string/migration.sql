@@ -1,0 +1,9 @@
+/*
+  Warnings:
+
+  - You are about to drop the column `video` on the `Lesson` table. All the data in the column will be lost.
+
+*/
+-- AlterTable
+ALTER TABLE "Lesson" DROP COLUMN "video",
+ADD COLUMN     "videoUrl" TEXT;
