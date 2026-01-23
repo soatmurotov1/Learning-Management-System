@@ -10,6 +10,7 @@ import { CourseCategoryModule } from './course_category/course_category.module';
 import { LessonGroupModule } from './lesson_group/lesson_group.module';
 import { ProfileModule } from './profile/profile.module';
 import { AssignedCourseModule } from './assigned_course/assigned_course.module';
+import { LessonModule } from './lesson/lesson.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AssignedCourseModule } from './assigned_course/assigned_course.module';
     LessonGroupModule,
     ProfileModule,
     AssignedCourseModule,
+    LessonModule,
   ],
   providers: [JwtStrategy],
 })
