@@ -12,6 +12,7 @@ export class CreateLessonDto {
   @IsString()
   @IsNotEmpty()
   about: string
+  
 
   @ApiProperty({ type: 'string', format: 'uuid' })
   @IsString()
