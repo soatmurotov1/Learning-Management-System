@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
@@ -7,7 +8,6 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/decorator/roles.guard';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { UserRole } from '@prisma/client';
-import { IsPublic } from 'src/common/decorator/is-public.decorator';
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -18,9 +18,31 @@ export class CourseController {
 
   @Post()
   @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: "ADMIN"})
-  create(@Body() createCourseDto: CreateCourseDto, @Request() req: any) {
-    return this.courseService.create(createCourseDto, req.user.id);
+  @UseInterceptors(FileInterceptor('banner'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        about: { type: 'string' },
+        price: { type: 'number' },
+        banner: { type: 'string', format: 'binary' },
+        introVideo: { type: 'string' },
+        level: { type: 'string' },
+        published: { type: 'boolean' },
+        categoryId: { type: 'string' },
+        mentorId: { type: 'string' },
+      },
+    },
+  })
+  @ApiOperation({ summary: 'ADMIN' })
+  create(
+    @Body() createCourseDto: CreateCourseDto,
+    @UploadedFile() bannerFile: Express.Multer.File,
+    @Request() req: any,
+  ) {
+    return this.courseService.create(createCourseDto, bannerFile, req.user.id);
   }
 
   @Get()
@@ -35,20 +57,44 @@ export class CourseController {
 
   @Get(':id')
   @Roles(UserRole.ADMIN, UserRole.MENTOR, UserRole.ASSISTANT, UserRole.STUDENT)
-  @ApiOperation({ summary: "ADMIN, MENTOR, ASSISTANT, STUDENT" })
+  @ApiOperation({ summary: 'ADMIN, MENTOR, ASSISTANT, STUDENT' })
   findOne(@Param('id') id: string) {
-    return this.courseService.findOne(id)
+    return this.courseService.findOne(id);
   }
 
   @Patch(':id')
   @Roles(UserRole.ADMIN)
+  @UseInterceptors(FileInterceptor('banner'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        about: { type: 'string' },
+        price: { type: 'number' },
+        banner: { type: 'string', format: 'binary' },
+        introVideo: { type: 'string' },
+        level: { type: 'string' },
+        published: { type: 'boolean' },
+        categoryId: { type: 'string' },
+        mentorId: { type: 'string' },
+      },
+    },
+  })
   @ApiOperation({ summary: 'ADMIN' })
   update(
     @Param('id') id: string,
     @Body() updateCourseDto: UpdateCourseDto,
+    @UploadedFile() bannerFile: Express.Multer.File,
     @Request() req: any,
   ) {
-    return this.courseService.update(id, updateCourseDto, req.user.id);
+    return this.courseService.update(
+      id,
+      updateCourseDto,
+      req.user.id,
+      bannerFile,
+    );
   }
 
   @Roles(UserRole.ADMIN)

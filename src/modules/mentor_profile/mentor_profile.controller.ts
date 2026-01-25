@@ -44,8 +44,8 @@ export class MentorProfileController {
   }
 
   @Get(':id')
-  @Roles(UserRole.ADMIN, UserRole.MENTOR, UserRole.ASSISTANT, UserRole.STUDENT)
-  @ApiOperation({ summary: 'ADMIN, MENTOR, ASSISTANT, STUDENT' })
+  @Roles(UserRole.ADMIN, UserRole.MENTOR, UserRole.ASSISTANT)
+  @ApiOperation({ summary: 'ADMIN, MENTOR, ASSISTANT' })
   async findOne(@Param('id') id: string) {
     return this.mentorProfileService.findOne(id)
   }

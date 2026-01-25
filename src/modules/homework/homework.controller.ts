@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, HttpCode, HttpStatus, UseInterceptors, UploadedFile} from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { HomeworkService } from './homework.service';
 import { CreateHomeworkDto } from './dto/create-homework.dto';
 import { UpdateHomeworkDto } from './dto/update-homework.dto';
@@ -17,10 +18,26 @@ export class HomeworkController {
 
   @Post()
   @Roles(UserRole.ADMIN, UserRole.MENTOR, UserRole.ASSISTANT)
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        task: { type: 'string' },
+        file: { type: 'string', format: 'binary' },
+        lessonId: { type: 'string' }
+      }
+    }
+  })
+  @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: 'ADMIN, MENTOR, ASSISTANT' })
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createHomeworkDto: CreateHomeworkDto, @Request() req: any) {
-    return this.homeworkService.create(createHomeworkDto, req.user.id);
+  create(
+    @Body() createHomeworkDto: CreateHomeworkDto,
+    @UploadedFile() file: Express.Multer.File,
+    @Request() req: any
+  ) {
+    return this.homeworkService.create(createHomeworkDto, file, req.user.id)
   }
 
   @Get()
@@ -39,13 +56,31 @@ export class HomeworkController {
 
   @Patch(':id')
   @Roles(UserRole.ADMIN, UserRole.MENTOR, UserRole.ASSISTANT)
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        task: { type: 'string' },
+        file: { type: 'string', format: 'binary' },
+        lessonId: { type: 'string' },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: 'ADMIN, MENTOR, ASSISTANT' })
   update(
     @Param('id') id: string,
     @Body() updateHomeworkDto: UpdateHomeworkDto,
-    @Request() req: any,
+    @UploadedFile() file: Express.Multer.File,
+    @Request() req: any
   ) {
-    return this.homeworkService.update(id, updateHomeworkDto, req.user.id);
+    return this.homeworkService.update(
+      id,
+      updateHomeworkDto,
+      req.user.id,
+      file
+    )
   }
 
   @Delete(':id')
