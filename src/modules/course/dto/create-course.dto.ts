@@ -1,43 +1,48 @@
-import { IsString, IsBoolean, IsOptional, IsEnum, IsNumber } from 'class-validator';
+import {
+  IsString,
+  IsBoolean,
+  IsOptional,
+  IsEnum,
+  IsNumber,
+} from 'class-validator';
 import { CourseLevel } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateCourseDto {
   @ApiProperty({ example: 'string' })
   @IsString()
-  name: string
+  name: string;
 
   @ApiProperty({ example: 'string' })
   @IsString()
-  about: string
+  about: string;
 
   @ApiProperty({ example: 10 })
   @IsNumber()
-  price: number
+  price: number;
 
-  @ApiProperty({ example: 'string' })
-  @IsString()
-  banner: string
+  @ApiProperty({ type: 'string', format: 'binary' })
+  banner: any;
 
   @ApiProperty({ example: 'string' })
   @IsOptional()
   @IsString()
-  introVideo?: string
+  introVideo?: string;
 
   @ApiProperty({ enum: CourseLevel })
   @IsEnum(CourseLevel)
-  level: CourseLevel
+  level: CourseLevel;
 
   @ApiProperty({ example: true })
   @IsOptional()
   @IsBoolean()
-  published?: boolean
+  published?: boolean;
 
   @ApiProperty({ example: 'string' })
   @IsString()
-  categoryId: string
+  categoryId: string;
 
   @ApiProperty({ example: 'string' })
   @IsString()
-  mentorId: string
+  mentorId: string;
 }

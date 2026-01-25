@@ -7,9 +7,11 @@ import { PrismaService } from '../prisma/prisma.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { VericationModule } from '../verication/verication.module';
+import { CloudinaryModule } from 'src/common/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
+    CloudinaryModule,
     ConfigModule,
     VericationModule,
     JwtModule.registerAsync({
