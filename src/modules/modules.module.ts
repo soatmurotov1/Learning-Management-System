@@ -12,6 +12,7 @@ import { ProfileModule } from './profile/profile.module';
 import { AssignedCourseModule } from './assigned_course/assigned_course.module';
 import { LessonModule } from './lesson/lesson.module';
 import { RatingModule } from './rating/rating.module';
+import { LessonViewModule } from './lesson_view/lesson_view.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { RatingModule } from './rating/rating.module';
     AssignedCourseModule,
     LessonModule,
     RatingModule,
+    LessonViewModule
   ],
   providers: [JwtStrategy],
 })

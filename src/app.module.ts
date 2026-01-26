@@ -8,7 +8,7 @@ import { RedisModule } from './common/redis/redis.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { VericationModule } from './modules/verication/verication.module';
-import { PurchasedCourseModule } from './purchased_course/purchased_course.module';
+import { PurchasedCourseModule } from './modules/purchased_course/purchased_course.module';
 
 @Module({
   imports: [
@@ -18,7 +18,8 @@ import { PurchasedCourseModule } from './purchased_course/purchased_course.modul
     ConfigModule.forRoot({
       isGlobal: true
     }), 
-    VericationModule, PurchasedCourseModule
+    VericationModule, 
+    PurchasedCourseModule
   ],
   controllers: [AppController],
   providers: [
