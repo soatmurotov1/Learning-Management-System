@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
@@ -16,7 +12,10 @@ export class CourseService {
   ) {}
   async create(
     dto: CreateCourseDto,
-    bannerFile: Express.Multer.File,
+    files: {
+      banner?: Express.Multer.File[];
+      introVideo?: Express.Multer.File[];
+    },
     userId: string,
   ) {
     if (!dto.mentorId) {
@@ -45,10 +44,19 @@ export class CourseService {
     }
 
     let bannerUrl: any = null;
-    if (bannerFile) {
-      const uploadedBanner =
-        await this.cloudinaryService.uploadFile(bannerFile);
+    if (files?.banner?.[0]) {
+      const uploadedBanner = await this.cloudinaryService.uploadFile(
+        files.banner[0],
+      );
       bannerUrl = uploadedBanner.url;
+    }
+
+    let introVideoUrl: any = null;
+    if (files?.introVideo?.[0]) {
+      const uploadedIntroVideo = await this.cloudinaryService.uploadFile(
+        files.introVideo[0],
+      );
+      introVideoUrl = uploadedIntroVideo.url;
     }
 
     return this.prisma.course.create({
@@ -57,7 +65,7 @@ export class CourseService {
         about: dto.about,
         price: dto.price,
         banner: bannerUrl,
-        introVideo: dto.introVideo,
+        introVideo: introVideoUrl,
         level: dto.level,
         published: dto.published || false,
         categoryId: dto.categoryId,
@@ -134,7 +142,10 @@ export class CourseService {
     id: string,
     dto: UpdateCourseDto,
     userId: string,
-    bannerFile?: Express.Multer.File,
+    files?: {
+      banner?: Express.Multer.File[];
+      introVideo?: Express.Multer.File[];
+    },
   ) {
     const course = await this.prisma.course.findUnique({
       where: { id },
@@ -162,10 +173,19 @@ export class CourseService {
     }
 
     let bannerUrl: any = course.banner;
-    if (bannerFile) {
-      const uploadedBanner =
-        await this.cloudinaryService.uploadFile(bannerFile);
+    if (files?.banner?.[0]) {
+      const uploadedBanner = await this.cloudinaryService.uploadFile(
+        files.banner[0],
+      );
       bannerUrl = uploadedBanner.url;
+    }
+
+    let introVideoUrl: any = course.introVideo;
+    if (files?.introVideo?.[0]) {
+      const uploadedIntroVideo = await this.cloudinaryService.uploadFile(
+        files.introVideo[0],
+      );
+      introVideoUrl = uploadedIntroVideo.url;
     }
 
     return this.prisma.course.update({
@@ -175,7 +195,7 @@ export class CourseService {
         about: dto.about,
         price: dto.price,
         banner: bannerUrl,
-        introVideo: dto.introVideo,
+        introVideo: introVideoUrl,
         level: dto.level,
         published: dto.published,
         categoryId: dto.categoryId,

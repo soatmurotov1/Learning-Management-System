@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body,Patch, Param, Delete, UseGuards, Request, Query, UseInterceptors, UploadedFiles } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
@@ -18,7 +18,12 @@ export class CourseController {
 
   @Post()
   @Roles(UserRole.ADMIN)
-  @UseInterceptors(FileInterceptor('banner'))
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'banner', maxCount: 1 },
+      { name: 'introVideo', maxCount: 1 },
+    ]),
+  )
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -28,7 +33,7 @@ export class CourseController {
         about: { type: 'string' },
         price: { type: 'number' },
         banner: { type: 'string', format: 'binary' },
-        introVideo: { type: 'string' },
+        introVideo: { type: 'string', format: 'binary' },
         level: { type: 'string' },
         published: { type: 'boolean' },
         categoryId: { type: 'string' },
@@ -39,10 +44,14 @@ export class CourseController {
   @ApiOperation({ summary: 'ADMIN' })
   create(
     @Body() createCourseDto: CreateCourseDto,
-    @UploadedFile() bannerFile: Express.Multer.File,
+    @UploadedFiles()
+    files: {
+      banner?: Express.Multer.File[];
+      introVideo?: Express.Multer.File[];
+    },
     @Request() req: any,
   ) {
-    return this.courseService.create(createCourseDto, bannerFile, req.user.id);
+    return this.courseService.create(createCourseDto, files, req.user.id);
   }
 
   @Get()
@@ -64,7 +73,12 @@ export class CourseController {
 
   @Patch(':id')
   @Roles(UserRole.ADMIN)
-  @UseInterceptors(FileInterceptor('banner'))
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'banner', maxCount: 1 },
+      { name: 'introVideo', maxCount: 1 }
+    ])
+  )
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -74,33 +88,32 @@ export class CourseController {
         about: { type: 'string' },
         price: { type: 'number' },
         banner: { type: 'string', format: 'binary' },
-        introVideo: { type: 'string' },
+        introVideo: { type: 'string', format: 'binary' },
         level: { type: 'string' },
         published: { type: 'boolean' },
         categoryId: { type: 'string' },
-        mentorId: { type: 'string' },
-      },
-    },
+        mentorId: { type: 'string' }
+      }
+    }
   })
   @ApiOperation({ summary: 'ADMIN' })
   update(
     @Param('id') id: string,
     @Body() updateCourseDto: UpdateCourseDto,
-    @UploadedFile() bannerFile: Express.Multer.File,
-    @Request() req: any,
+    @UploadedFiles()
+    files: {
+      banner?: Express.Multer.File[]
+      introVideo?: Express.Multer.File[]
+    },
+    @Request() req: any
   ) {
-    return this.courseService.update(
-      id,
-      updateCourseDto,
-      req.user.id,
-      bannerFile,
-    );
+    return this.courseService.update(id, updateCourseDto, req.user.id, files)
   }
 
   @Roles(UserRole.ADMIN)
   @Delete(':id')
   @ApiOperation({ summary: 'ADMIN' })
   remove(@Param('id') id: string, @Request() req: any) {
-    return this.courseService.remove(id, req.user.id);
+    return this.courseService.remove(id, req.user.id)
   }
 }
