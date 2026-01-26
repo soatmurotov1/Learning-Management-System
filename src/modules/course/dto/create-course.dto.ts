@@ -5,6 +5,7 @@ import {
   IsEnum,
   IsNumber,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { CourseLevel } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -18,10 +19,12 @@ export class CreateCourseDto {
   about: string;
 
   @ApiProperty({ example: 10 })
+  @Type(() => Number)
   @IsNumber()
   price: number;
 
   @ApiProperty({ type: 'string', format: 'binary' })
+  @IsOptional()
   banner: any;
 
   @ApiProperty({ example: 'string' })
@@ -35,6 +38,7 @@ export class CreateCourseDto {
 
   @ApiProperty({ example: true })
   @IsOptional()
+  @Type(() => Boolean)
   @IsBoolean()
   published?: boolean;
 
